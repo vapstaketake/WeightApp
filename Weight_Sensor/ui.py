@@ -2,6 +2,7 @@ import tkinter as tk
 import mock_weight_reader as mock
 import importlib
 from tkinter import PhotoImage
+from PIL import Image, ImageTk
 
 def start_realtime_display():
     try:
@@ -35,8 +36,8 @@ root.title("カフェイン量の入力とリアルタイム表示")
 root.geometry("800x600")
 root.resizable(False, False)
 
-image_path = "coffee_icon.png"  # 画像のファイルパス
-image = PhotoImage(file=image_path)
+photo=Image.open("png/coffee_icon.png")
+image=ImageTk.PhotoImage(photo)
 
 # コーヒーのアイコンを設定して表示
 image_label = tk.Label(root, image=image)
