@@ -90,8 +90,8 @@ int main() {
     SensorData* data = static_cast<SensorData*>(ptr);
     std::cout << "Shared memory created and mapped." << std::endl;
     while (true) {
-        std::cout << "Reading sensor data..." << std::endl;
         double current_value = readHx711Count();
+        std::cout << "Current value: " << current_value << std::endl;
         write_sensor_memory(data, current_value);
         while (data->ready) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
