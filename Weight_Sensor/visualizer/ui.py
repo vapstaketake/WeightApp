@@ -3,6 +3,8 @@ import mock_weight_reader as mock
 import importlib
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
+from header import EXECUTABLE_PATH
+from hx711_wrapper import HX711
 
 def start_realtime_display():
     try:
@@ -23,8 +25,7 @@ def start_realtime_display():
         label.config(text="無効な入力です。数字を入力してください。")  
 
 def update_value(caffeine_amount):
-    importlib.reload(mock)
-    new_value = round(mock.reading,2)
+    new_value = HX711.get_raw_reading(EXECUTABLE_PATH)  # センサーからの生の読み取り値を取得
     caffeine_value=new_value*caffeine_amount #カフェイン計算方法はわからん！
     label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {caffeine_value} mg")
     root.after(100, update_value,caffeine_amount)  # 0.1秒ごとに更新
