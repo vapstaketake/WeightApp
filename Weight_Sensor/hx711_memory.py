@@ -21,7 +21,15 @@ class SensorData(ctypes.Structure):
         ("weight", ctypes.c_double),
         ("ready", ctypes.c_bool)
     ]
+
 process = subprocess.Popen([EXECUTABLE_PATH])
+# 少し待ってからプロセスが落ちていないか確認（例：0.5秒）
+time.sleep(0.5)
+
+if process.poll() is None:
+    print("✅ weight_reader が正常に起動しました")
+else:
+    print("❌ weight_reader の起動に失敗しました（すでに終了しています）")
 memory=posix_ipc.SharedMemory(SHM_NAME)
 map_file=mmap.mmap(memory.fd,ctypes.sizeof(SensorData),mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE)
 try:
@@ -34,6 +42,8 @@ try:
             sensor_data.ready=False
             map_file.seek(0)
             map_file.write(bytearray(sensor_data))
+        else:
+            print("Waiting for sensor data...")
         time.sleep(0.5)
 
 except KeyboardInterrupt:
