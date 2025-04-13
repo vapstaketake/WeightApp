@@ -8,7 +8,7 @@ class HX711:
         try:
             result=subprocess.run([EXECUTABLE_PATH], capture_output=True, text=True, check=True)
             if result.returncode == 0:
-                return float(result.stdout.decode().strip())
+                return float(result.stdout.strip())
             else:
                 print("Error:", result.stderr.decode())
         except Exception as e:
