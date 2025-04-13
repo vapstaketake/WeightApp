@@ -6,7 +6,7 @@ class HX711:
         センサーからの生の読み取り値を取得するメソッド。
         """
         try:
-            result=subprocess.run([EXECUTABLE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result=subprocess.run([EXECUTABLE_PATH], capture_output=True, text=True, check=True)
             if result.returncode == 0:
                 return float(result.stdout.decode().strip())
             else:
