@@ -41,7 +41,6 @@ try:
             map_file.flush()
         else:
             print("Waiting for sensor data...")
-            print(sensor_data.weight)
         time.sleep(0.5)
 
 except KeyboardInterrupt:

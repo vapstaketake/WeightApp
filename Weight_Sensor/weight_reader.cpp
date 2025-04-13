@@ -43,7 +43,6 @@ static void* map_shared_memory(int fd, size_t size) {
 }
 //センサーデータの書き込み
 static void write_sensor_memory(SensorData* data,double value) {
-    std::cout << "Writing to shared memory: " << value << std::endl;
     data->weight = value;
     data->ready = true;
     
@@ -86,7 +85,6 @@ int main() {
     if (!ptr) return 1;
 
     SensorData* data = static_cast<SensorData*>(ptr);
-    std::cout << "Shared memory created and mapped." << std::endl;
     while (true) {
         double current_value = readHx711Count();
         write_sensor_memory(data, current_value);
