@@ -87,7 +87,7 @@ int main() {
     if (!ptr) return 1;
 
     SensorData* data = static_cast<SensorData*>(ptr);
-
+    cout << "Shared memory created and mapped." << std::endl;
     while (true) {
         double current_value = readHx711Count();
         write_sensor_memory(data, current_value);
