@@ -44,16 +44,14 @@ static void* map_shared_memory(int fd, size_t size) {
 //センサーデータの書き込み
 static void write_sensor_memory(SensorData* data,double value) {
     std::cout << "Writing to shared memory: " << value << std::endl;
-    if(data->ready) {
     data->weight = value;
     data->ready = true;
-    }
+    
 
 }
 //センサデータの取得
 double readHx711Count(int GpioPinDT = 2, int GpioPinSCK = 3) {
     wiringPiSetupGpio();
-    std::cout << "Reading from HX711..." << std::endl;
     int i;
     unsigned int Count = 0;
     pinMode(GpioPinDT, OUTPUT);
@@ -76,7 +74,6 @@ double readHx711Count(int GpioPinDT = 2, int GpioPinSCK = 3) {
     digitalWrite(GpioPinSCK, HIGH);
     Count = Count ^ 0x800000;
     digitalWrite(GpioPinSCK, LOW);
-    std::cout << "Read value: " << Count << std::endl;
     return double(Count);
 }
 
@@ -92,7 +89,6 @@ int main() {
     std::cout << "Shared memory created and mapped." << std::endl;
     while (true) {
         double current_value = readHx711Count();
-        std::cout << "Current value: " << current_value << std::endl;
         write_sensor_memory(data, current_value);
         while (data->ready) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -29,13 +29,16 @@ map_file=mmap.mmap(memory.fd,ctypes.sizeof(SensorData),mmap.MAP_SHARED, mmap.PRO
 try:
     while True:
         map_file.seek(0)
-        sensor_data = SensorData.from_buffer(map_file)
+        sensor_data = SensorData.from_buffer_copy(map_file)
+        print(sensor_data.ready)
         if sensor_data.ready:
             weight = sensor_data.weight
             print(f"Weight: {weight} g")
+
             sensor_data.ready=False
             map_file.seek(0)
-            map_file.write(bytearray(sensor_data))
+            map_file.write(bytes(sensor_data))
+            map_file.flush()
         else:
             print("Waiting for sensor data...")
             print(sensor_data.weight)
