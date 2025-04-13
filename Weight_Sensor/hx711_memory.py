@@ -4,7 +4,6 @@ import time
 import posix_ipc
 import subprocess
 import os
-import os
 import sys
 
 
@@ -22,7 +21,7 @@ class SensorData(ctypes.Structure):
         ("weight", ctypes.c_double),
         ("ready", ctypes.c_bool)
     ]
-process = subprocess.run([EXECUTABLE_PATH], capture_output=True, text=True, check=True)
+process = subprocess.Popen([EXECUTABLE_PATH])
 memory=posix_ipc.SharedMemory(SHM_NAME)
 map_file=mmap.mmap(memory.fd,ctypes.sizeof(SensorData),mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE)
 try:
@@ -33,6 +32,8 @@ try:
             weight = sensor_data.weight
             print(f"Weight: {weight} g")
             sensor_data.ready=False
+            map_file.seek(0)
+            map_file.write(bytearray(sensor_data))
         time.sleep(0.5)
 
 except KeyboardInterrupt:
