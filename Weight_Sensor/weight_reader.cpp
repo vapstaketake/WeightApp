@@ -53,7 +53,7 @@ static void write_sensor_memory(SensorData* data,double value) {
 //センサデータの取得
 double readHx711Count(int GpioPinDT = 2, int GpioPinSCK = 3) {
     wiringPiSetupGpio();
-    
+    std::cout << "Reading from HX711..." << std::endl;
     int i;
     unsigned int Count = 0;
     pinMode(GpioPinDT, OUTPUT);
@@ -76,6 +76,7 @@ double readHx711Count(int GpioPinDT = 2, int GpioPinSCK = 3) {
     digitalWrite(GpioPinSCK, HIGH);
     Count = Count ^ 0x800000;
     digitalWrite(GpioPinSCK, LOW);
+    std::cout << "Read value: " << Count << std::endl;
     return double(Count);
 }
 
