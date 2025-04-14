@@ -22,28 +22,34 @@ class SensorData(ctypes.Structure):
         ("ready", ctypes.c_bool)
     ]
 
-process = subprocess.Popen([EXECUTABLE_PATH])
-
-memory=posix_ipc.SharedMemory(SHM_NAME)
-map_file=mmap.mmap(memory.fd,ctypes.sizeof(SensorData),mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE)
-try:
-    while True:
-        map_file.seek(0)
-        sensor_data = SensorData.from_buffer_copy(map_file)
-        if sensor_data.ready:
-            weight = sensor_data.weight
-            print(f"Weight: {weight} g")
-
-            sensor_data.ready=False
+def get_weight_data(callback=None):
+    """
+    センサーからの生の読み取り値を取得するメソッド。
+    """
+    process = subprocess.Popen([EXECUTABLE_PATH])
+    memory=posix_ipc.SharedMemory(SHM_NAME)
+    map_file=mmap.mmap(memory.fd,ctypes.sizeof(SensorData),mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE)
+    try:
+        while True:
             map_file.seek(0)
-            map_file.write(bytes(sensor_data))
-            map_file.flush()
-        time.sleep(0.5)
+            sensor_data = SensorData.from_buffer_copy(map_file)
+            if sensor_data.ready:
+                weight = sensor_data.weight
+                print(f"Weight: {weight} g")
 
-except KeyboardInterrupt:
-    print("closed")
+                if callback:
+                    callback(weight)
 
-finally:
-    map_file.close()
-    memory.close()
-    process.terminate()
+                sensor_data.ready=False
+                map_file.seek(0)
+                map_file.write(bytes(sensor_data))
+                map_file.flush()
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("closed")
+
+    finally:
+        map_file.close()
+        memory.close()
+        process.terminate()
