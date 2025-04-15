@@ -1,10 +1,24 @@
 import tkinter as tk
 import mock_weight_reader as mock
 import importlib
+import os
+import numpy as np
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
-from header import EXECUTABLE_PATH
+from header import EXECUTABLE_PATH,PATH
 from hx711_wrapper import HX711
+
+count=0 #テスト用
+
+def demo_wave():
+    #アニメーションテスト用に標準のサイン波を生成
+    frequency = 5  # 周波数（Hz）
+    sampling_rate = 1000  # サンプリングレート（Hz）
+    duration = 1.0  # 秒
+    amplitude = 1.0  # 振幅
+    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
+    sin_wave = amplitude * np.sin(2 * np.pi * frequency * t) + amplitude
+    return(sin_wave)
 
 def start_realtime_display():
     try:
@@ -25,11 +39,22 @@ def start_realtime_display():
         label.config(text="無効な入力です。数字を入力してください。")  
 
 def update_value(caffeine_amount):
-    new_value = HX711.get_raw_reading(EXECUTABLE_PATH)  # センサーからの生の読み取り値を取得
+    #テスト用↓(sin波を使用)
+    global count
+    value=demo_wave()
+    new_value=value[count]
+    count += 1
+
+    #mockから値を取得↓
+    #importlib.reload(mock)
+    #new_value = round(mock.reading,2)
+    
+    #センサーからの生の読み取り値を取得↓
+    #new_value = HX711.get_raw_reading(EXECUTABLE_PATH)
+    
     caffeine_value=new_value*caffeine_amount #カフェイン計算方法はわからん！
     label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {caffeine_value} mg")
     root.after(100, update_value,caffeine_amount)  # 0.1秒ごとに更新
-
 
 # Tkinterウィンドウを作成
 root = tk.Tk()
@@ -37,7 +62,7 @@ root.title("カフェイン量の入力とリアルタイム表示")
 root.geometry("800x600")
 root.resizable(False, False)
 
-photo=Image.open("png/coffee_icon.png")
+photo=Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png"))
 image=ImageTk.PhotoImage(photo)
 
 # コーヒーのアイコンを設定して表示
