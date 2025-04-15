@@ -2,6 +2,7 @@ import tkinter as tk
 import mock_weight_reader as mock
 import importlib
 import os
+import time
 import numpy as np
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
@@ -9,6 +10,7 @@ from header import EXECUTABLE_PATH,PATH
 from hx711_wrapper import HX711
 
 count=0 #テスト用
+before_value=10
 
 def demo_wave():
     #アニメーションテスト用に標準のサイン波を生成
@@ -34,15 +36,16 @@ def start_realtime_display():
         start_button.pack_forget()
 
         # リアルタイム表示の開始
-        update_value(caffeine_amount)  
+        update_value(caffeine_amount)
     except ValueError:
         label.config(text="無効な入力です。数字を入力してください。")  
 
 def update_value(caffeine_amount):
     #テスト用↓(sin波を使用)
-    global count
+    global count,before_value
+    #time.sleep(0.05)
     value=demo_wave()
-    new_value=value[count]
+    new_value=round(value[count],2)
     count += 1
 
     #mockから値を取得↓
@@ -51,23 +54,66 @@ def update_value(caffeine_amount):
     
     #センサーからの生の読み取り値を取得↓
     #new_value = HX711.get_raw_reading(EXECUTABLE_PATH)
-    
+
+    #重さ変化を表示
     caffeine_value=new_value*caffeine_amount #カフェイン計算方法はわからん！
-    label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {caffeine_value} mg")
-    root.after(100, update_value,caffeine_amount)  # 0.1秒ごとに更新
+    
+    if new_value>=0 and new_value <0.33:
+        check_value=0
+    elif new_value>=0.33 and new_value <0.66:
+        check_value=1
+    elif new_value>=0.66 and new_value <0.99:
+        check_value=2
+    elif new_value>=0.99 and new_value <1.32:
+        check_value=3
+    elif new_value>=1.32 and new_value <=1.65:
+        check_value=4
+    else:
+        check_value=5
+    
+    if before_value != check_value:
+        #print(check_value)
+        Animation(check_value)
+        before_value=check_value
+    
+    
+    label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {round(caffeine_value,2)} mg")
+    root.after(10, update_value,caffeine_amount)  # 0.1秒ごとに更新
+
+def Animation(Levelvalue):
+    #コーヒーカップのアニメーション
+    global Amimation_image
+    Amimation_image=ImageTk.PhotoImage(image=createcup(default_cup,Levelvalue))
+    canvas.itemconfig(imagearea, image=Amimation_image)
+
+def createcup(cup,n):
+    return_cup = Image.alpha_composite(cup, cupLevel[n])
+    return return_cup
 
 # Tkinterウィンドウを作成
 root = tk.Tk()
 root.title("カフェイン量の入力とリアルタイム表示")
 root.geometry("800x600")
 root.resizable(False, False)
+#root['background']='#808080'
 
-photo=Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png"))
-image=ImageTk.PhotoImage(photo)
+default_cup=Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png"))
+cupLevel = [Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png")),
+        Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level1.png")),
+        Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level2.png")),
+        Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level3.png")),
+        Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level4.png")),
+        Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level5.png"))]
+default_image=ImageTk.PhotoImage(image=createcup(default_cup,0))
+
+canvas = tk.Canvas(root, width=400, height=320, bd=0, highlightthickness=0, relief='ridge')
+#canvas['background']=root['background']
+imagearea = canvas.create_image(0, 0, image=default_image, anchor=tk.NW)
+canvas.pack(side="top", pady=10)
 
 # コーヒーのアイコンを設定して表示
-image_label = tk.Label(root, image=image)
-image_label.pack(side="top", pady=10)  # 上部に表示
+#image_label = tk.Label(root, image=default_image)
+#image_label.pack(side="top", pady=10)  # 上部に表示
 
 # カフェイン量の入力を促すラベルとエントリー
 caffeine_label = tk.Label(root, text="コーヒーの粉100gに対してのカフェイン量(mg) を入力:", font=("Helvetica", 14))
