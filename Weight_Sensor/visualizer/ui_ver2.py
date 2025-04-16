@@ -95,6 +95,7 @@ def stop_animation():
 def combined_function():
     start_realtime_display()
     stop_animation()
+    #start_realtime_display()
 
 # Tkinterウィンドウを作成
 root = tk.Tk()
