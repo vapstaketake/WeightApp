@@ -72,10 +72,8 @@ def update_value(caffeine_amount):
         check_value=5
     
     if before_value != check_value:
-        #print(check_value)
         Animation(check_value)
         before_value=check_value
-    
     
     label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {round(caffeine_value,2)} mg")
     root.after(10, update_value,caffeine_amount)  # 0.1秒ごとに更新
@@ -95,7 +93,6 @@ root = tk.Tk()
 root.title("カフェイン量の入力とリアルタイム表示")
 root.geometry("800x600")
 root.resizable(False, False)
-#root['background']='#808080'
 
 default_cup=Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png"))
 cupLevel = [Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.png")),
@@ -106,14 +103,10 @@ cupLevel = [Image.open(os.path.join(PATH,"png","weight_coffee_UI","coffee_cup.pn
         Image.open(os.path.join(PATH,"png","weight_coffee_UI","Level5.png"))]
 default_image=ImageTk.PhotoImage(image=createcup(default_cup,0))
 
+#コーヒーのアイコンを設定して表示
 canvas = tk.Canvas(root, width=400, height=320, bd=0, highlightthickness=0, relief='ridge')
-#canvas['background']=root['background']
 imagearea = canvas.create_image(0, 0, image=default_image, anchor=tk.NW)
 canvas.pack(side="top", pady=10)
-
-# コーヒーのアイコンを設定して表示
-#image_label = tk.Label(root, image=default_image)
-#image_label.pack(side="top", pady=10)  # 上部に表示
 
 # カフェイン量の入力を促すラベルとエントリー
 caffeine_label = tk.Label(root, text="コーヒーの粉100gに対してのカフェイン量(mg) を入力:", font=("Helvetica", 14))
