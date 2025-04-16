@@ -43,8 +43,8 @@ def animation():
         charactor_image = ImageTk.PhotoImage(image=createface(i))
         canvas.itemconfig(imagearea, image=charactor_image)
         canvas.update()
-    root.after(3000, animation)
+    root.after(10, animation)
 
 
-root.after(3000, animation)
+root.after(10, animation)
 root.mainloop()
