@@ -7,9 +7,10 @@ from PIL import Image, ImageTk
 from header import EXECUTABLE_PATH,PATH
 from hx711_wrapper import HX711
 
-count=0 #テスト用
+count=0
 before_value=10
 is_animating = True
+dir=1
 
 def start_realtime_display():
     try:
@@ -34,6 +35,7 @@ def update_value(caffeine_amount):
     #テスト用↓(sin波を使用)
     value=demo.sin_wave
     new_value=round(value[count],2)
+    
     count += 1
 
     #mockから値を取得↓
@@ -61,7 +63,8 @@ def update_value(caffeine_amount):
     if before_value != check_value:
         Animation(check_value)
         before_value=check_value
-    
+    if count % 50 ==0:
+        Animation2()
     label.config(text=f"コーヒーの粉: {new_value} g\nカフェイン量: {round(caffeine_value,2)} mg")
     root.after(10, update_value,caffeine_amount)  # 0.1秒ごとに更新
 
@@ -73,6 +76,11 @@ def Animation(Levelvalue):
     #ずんだもんのアニメーション
     zun_Animation_image=ImageTk.PhotoImage(image=createzundamon(UI_zun[Levelvalue],Levelvalue))
     canvas.itemconfig(imagearea_zun, image=zun_Animation_image)
+
+def Animation2():
+    global dir
+    canvas.move(imagearea_zun,0,dir*5) 
+    dir=(-1)*dir
 
 def wait_Animation(direction=1):
     if not is_animating:
@@ -100,7 +108,7 @@ def combined_function():
 root = tk.Tk()
 root.title("カフェイン量の入力とリアルタイム表示")
 root.geometry("800x600")
-#root.resizable(False, False)
+root.resizable(False, False)
 
 #画像読み込み
 default_cup=io.default_cup
