@@ -1,5 +1,5 @@
 import tkinter as tk
-import mock_weight_reader as mock
+import Weight_Sensor.visualizer.mock_weight_reader as mock
 import importlib
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
