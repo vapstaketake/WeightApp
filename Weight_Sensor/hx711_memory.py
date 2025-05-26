@@ -35,7 +35,6 @@ def get_weight_data(callback=None):
             sensor_data = SensorData.from_buffer_copy(map_file)
             if sensor_data.ready:
                 weight = sensor_data.weight
-                print(f"Weight: {weight} g")
 
                 if callback:
                     callback(weight)

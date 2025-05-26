@@ -1,6 +1,6 @@
 import tkinter as tk
 import importlib
-import mock_weight_reader as mock
+import mock_weight_reader as moc
 import ImageOpen as io
 import DemoWave as demo
 from PIL import Image, ImageTk
