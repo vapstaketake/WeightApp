@@ -9,5 +9,6 @@ if is_windows:
     EXECUTABLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "weight_reader.exe")
 else:
     EXECUTABLE_PATH=os.path.join(os.path.dirname(os.path.abspath(__file__)), "weight_reader")
+    PATH=os.path.dirname(os.path.dirname(os.path.abspath(__file__))) #.pngを参照する時のパス指定(~/weight/WeightApp/Weight_Sensorを取得)
 
 

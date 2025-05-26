@@ -17,4 +17,4 @@ cyclic = math.sin(phase * 2 * math.pi) * variation * 0.5
 random_var = random.uniform(-variation * 0.2, variation * 0.2)
 
 reading = base_weight + cyclic + random_var
-print(reading)
+#print(reading)
